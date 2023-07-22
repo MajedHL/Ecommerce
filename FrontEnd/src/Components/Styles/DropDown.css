@@ -1,0 +1,19 @@
+/* Custom CSS for changing the dropdown toggle icon */
+
+#dropdown-basic::after{    
+    display: none;
+  }
+
+#dropdown-basic::before {    
+    content: "\2630"; /* Unicode for three horizontal lines (hamburger icon) */
+    display: inline-block;
+    font-family: 'Arial', sans-serif; /* Use any font that has the three horizontal lines character */
+    font-weight: bold;    
+  }
+
+  /* #dropdown-basic{
+     
+
+  } */
+
+

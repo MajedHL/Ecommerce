@@ -1,0 +1,19 @@
+.NavBar {
+    display: flex;
+    justify-content: space-between;
+    background-color: dimgray;
+    align-items: center;
+    
+}
+
+a{
+    width: 200px; 
+    color: aliceblue;
+    text-decoration: none;
+    font-weight: bold;
+    margin: 0.5%;
+    text-align: center;
+}
+
+
+
