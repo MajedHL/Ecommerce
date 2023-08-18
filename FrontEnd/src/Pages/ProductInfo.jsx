@@ -12,7 +12,7 @@ const [open, setOpen] = useState(false);
 
 
 let {id}=useParams();
-let {fruits, Refresh}=useContext(Context); 
+let {fruits, RefreshFruits}=useContext(Context); 
 
  useEffect(() => {    
     const prod = fruits.find((fruit) => fruit._id === id);
@@ -28,7 +28,7 @@ let {fruits, Refresh}=useContext(Context);
      }
 
     let resp= await fetch(`http://localhost:5000/fruits/${product._id}`,options)    
-     Refresh();
+     RefreshFruits();
   }
     
   

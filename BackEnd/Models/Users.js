@@ -1,20 +1,24 @@
 const mongoose=require('mongoose');
 const UserSchema=new mongoose.Schema({
-    login:{
+    userName:{
         type:String,
         unique:true,
-        
+        required:true,
     },
-    password:String,
+    password:{
+        type:String,        
+        required:true,
+    },
     email:{
         type:String,
         unique:true,
-        
+        required:true,
     },
     role:String,
     access_key:{
         type:mongoose.SchemaTypes.Mixed,
         required:false,
+        unique:true,
     }
 },
 {
@@ -22,7 +26,7 @@ const UserSchema=new mongoose.Schema({
     required:true,
 })
 
-const User=mongoose.model('User',UserSchema);
+const Users=mongoose.model('Users',UserSchema);
 
 
-module.exports=User;
+module.exports=Users;

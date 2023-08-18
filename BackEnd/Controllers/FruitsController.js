@@ -6,15 +6,17 @@ const mongoose=require('mongoose');
 const { resolve } = require('path');
 const fsExtra=require('fs-extra')
 
-class FruitController{
+class FruitsController{
 
 
     static async getAll(req,res){
-        try{
+        try{ 
+            if(req.session.userId) console.log("still logged")
+            
         let fruits= await Fruits.find().lean();
         let promises=[] 
         fruits.forEach( (fruit)=>{             
-             promises.push(FruitController.GetImage(req,res,fruit.ref)); 
+             promises.push(FruitsController.GetImage(req,res,fruit.ref)); 
                  
         })
         
@@ -26,8 +28,7 @@ class FruitController{
                 fruits[i]['image']=images[i];
             }
             return fruits;
-        }).then((fruits)=>{
-            console.log(fruits);
+        }).then((fruits)=>{            
             return  res.status(200).json(fruits)
         }) 
 
@@ -54,7 +55,7 @@ class FruitController{
             console.log("ref:"+ref)
             const fruit={title,price_U,stocks,ref};
             await Fruits.create(fruit)
-            result= await FruitController.UploadFIle(req,res)         
+            result= await FruitsController.UploadFIle(req,res)         
             console.log("result:"+result)
             if(result!==false) return res.status(201).json(fruit)
         
@@ -82,7 +83,7 @@ class FruitController{
        }    
     }
     
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!AGAIN TRY ADDING A FRUIT WHEN MINION IS STOPPED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 
     static  UploadFIle(req,res){
         if(!req.file){
@@ -195,7 +196,7 @@ static async  getById(req,res){
      try{
          const id=req.params.id;   
          if(id){
-             const fruit=await Fruits.find({_id:id})
+             const fruit=await Fruits.findOne({_id:id})
              console.log(fruit)
              return res.status(200).json(fruit);
          }
@@ -224,4 +225,4 @@ function CleansTemp(dirPath){
     })
 }
 
-module.exports=FruitController
+module.exports=FruitsController

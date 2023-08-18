@@ -13,9 +13,9 @@ export default function (props) {
      <Link to={`${location.pathname}`+`/${_id}`}> <img src={image} width={250} height={200} /></Link>
       <div>
         <p>{title}</p>
-        <p>
-          ${price_U}/kg <InputField itemId={_id} />
-        </p>        
+        <div>
+          ${price_U}/kg <InputField  product={props.data} />
+        </div>        
       </div>
     </div>
   );

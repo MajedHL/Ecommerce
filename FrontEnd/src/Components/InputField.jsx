@@ -1,7 +1,8 @@
 import { useContext, useState } from "react";
 import { Context } from "../Components/Context";
 export default function (props) {
-  const itemId = props.itemId;
+  
+  const product=props.product;
   var [input, setinput] = useState("");
   const { addItems } = useContext(Context);
 
@@ -12,8 +13,8 @@ export default function (props) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    addItems(itemId, input);
-    console.log('id:'+itemId)
+    addItems(product, input);
+    console.log('id:'+product._id)
   };
 
   return (

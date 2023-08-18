@@ -1,6 +1,6 @@
 const express=require('express');
 const path = require('path');
-const FruitController=require('../Controllers/FruitController')
+const FruitsController=require('../Controllers/FruitsController')
 const router=express.Router();
 const fs=require('fs')
 const multer = require('multer');
@@ -20,12 +20,12 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage }).single('file');
 
-router.get('/',FruitController.getAll)
-router.get('/:id',FruitController.getById)
-router.post('/',upload,FruitController.add)
-router.delete('/',FruitController.deleteAll)
-router.get('/imgs',FruitController.GetImage)
-router.delete('/:id',FruitController.deleteById)
+router.get('/',FruitsController.getAll)
+router.get('/:id',FruitsController.getById)
+router.post('/',upload,FruitsController.add)
+router.delete('/',FruitsController.deleteAll)
+router.get('/imgs',FruitsController.GetImage)
+router.delete('/:id',FruitsController.deleteById)
 
 
 

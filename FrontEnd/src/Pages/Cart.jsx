@@ -1,55 +1,53 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { Context } from "../Components/Context.jsx";
-import { products } from "../Products";
+import { StatusCode } from '../utils/StatusCode'; 
+// import { products } from "../Products";
 export default function () {
-  const { carteItems, setcarteItems } = useContext(Context);
-
-  const getCaseById = (array, id) => {
-    return array.filter((arrycase) => {
-      return arrycase.id == id;
-    });
-  };
+  const {  cart, isLoggedIn, isLoading, setCart, setCartModified } = useContext(Context);
 
   const prixTotal = () => {
     var prixtotal = 0;
+    let carteItems=cart.items;
     for (let item of carteItems) {
-      let price = getCaseById(products, item.id)[0].pricePerKg;
-      prixtotal += price * item.number;
+      let price = item.productId.price_U;
+      prixtotal += price * item.quantity;
     }
     return prixtotal;
   };
 
-  const deleteItems = (id) => {
-    let cartcopy = [...carteItems];
-    cartcopy.map((item) => {
-      if (item.id == id) return (item.number = parseFloat(0));
-    });
-
-    setcarteItems(cartcopy);
+  //FIX
+  const deleteItems = (id) => {      
+    let cartcopy = {...cart};
+    cartcopy.items= cartcopy.items.filter((item)=>item.productId._id!==id);
+    setCart(cartcopy)
+    setCartModified(true);
   };
 
+  if(isLoading) return;
+  if(!isLoggedIn) return <>Please login First</>
+  if(!cart.items) return;
   return (
     <div>
-      {carteItems.map((item) => {
-        return (
-          <p>
+    {
+       cart.items.map((item) => {
+        return (          
             <pre>
               <img
-                src={getCaseById(products, item.id)[0].image}
+                src={item.image}
                 width={250}
                 height={200}
               />
-              {getCaseById(products, item.id)[0].name}: {item.number}{" "}
+              {item.productId.title}: {item.quantity}{" "}
               <button
                 className="deleteItems"
-                onClick={() => deleteItems(item.id)}
+                onClick={() => deleteItems(item.productId._id)}
               >
                 X
               </button>
-            </pre>
-          </p>
+            </pre>          
         );
-      })}
+      })
+    }
       <p> Total Price: {prixTotal()}$</p>
     </div>
   );

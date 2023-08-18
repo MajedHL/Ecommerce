@@ -5,9 +5,7 @@ import  Notification from "../Components/Notification";
 
 export default function () {
 
-const sendGet=()=>{
-  fetch('http://localhost:5000/api')
-}
+
 
   return (
     <div>
