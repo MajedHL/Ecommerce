@@ -23,4 +23,4 @@ yarn-debug.log*
 yarn-error.log*
 
 # others
-.drawio
+*.drawio
