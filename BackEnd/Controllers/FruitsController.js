@@ -1,5 +1,6 @@
 const Fruits=require('../Models/Fruits');
-const Minio = require('minio');
+// const Minio = require('minio');
+const {minioClient}=require('../config')
 const fs=require('fs');
 const path=require('path');
 const mongoose=require('mongoose');
@@ -86,18 +87,10 @@ class FruitsController{
 
 
     static  UploadFIle(req,res){
-        if(!req.file){
-            res.status(200).send("No image was chosen so the fruit will have the default fruit image")
-            return false
-        }              
-
-    const minioClient = new Minio.Client({
-    endPoint: 'localhost',
-    port: 9000,
-    useSSL: false,
-    accessKey: 'adminUser',
-    secretKey: 'Passkey2001',
-    });
+    if(!req.file){
+        res.status(200).send("No image was chosen so the fruit will have the default fruit image")
+        return false
+    }        
     const bucketName = 'fruits';
     const file=req.file;
     let objectName=file.filename;
@@ -125,8 +118,7 @@ class FruitsController{
           console.log('File uploaded successfully to MinIO'); 
         
       });
-   }) ;
-   
+   }) ;   
 } 
 
     
@@ -136,30 +128,18 @@ class FruitsController{
 
 
 
-static  GetImage(req, res, objectName) {
-    const minioClient = new Minio.Client({
-              endPoint: 'localhost',
-              port: 9000,
-              useSSL: false,
-              accessKey: 'adminUser',
-              secretKey: 'Passkey2001',
-            });
-            const bucketName = 'fruits';
-            
-     return new Promise((resolve,reject)=>{
-        
+static  GetImage(req, res, objectName) {   
+     const bucketName = 'fruits';            
+     return new Promise((resolve,reject)=>{        
             minioClient.presignedGetObject(bucketName, objectName, (err, presignedUrl) => {
                 if (err) {
                   console.error('Error generating presigned URL:', err);
                  reject("Failed to fetch URL");
                 return;
-                }
-                
+                }                
                resolve(presignedUrl);   
-              });        
-        
+              });    
      })       
-
 }
 
 
@@ -174,9 +154,13 @@ static async  deleteById(req,res){
    console.log("delete by id")
     try{
         const id=req.params.id;   
-        if(id){
-            const fruit=await Fruits.deleteOne({_id:id})
-            console.log(fruit)
+        if(id){                             
+                                        
+            const fruit=await Fruits.findOneAndDelete({_id:id})
+            
+            if(fruit.ref!=="fruits.jpg") 
+            {const removeResp= await RemoveImage('fruits',fruit.ref) 
+            console.log("removeResp:",removeResp)}            
             return res.status(200).json(fruit);
         }
         else return res.status(400).send("the requested fruit doesnt exist")
@@ -223,6 +207,20 @@ function CleansTemp(dirPath){
         }
         console.log('All files deleted from directory Successfully.');
     })
+}
+
+
+function RemoveImage(bucketName,imageName) {
+   return new Promise((resolve, reject)=>{
+    minioClient.removeObject(bucketName, imageName, function(err) {
+        if (err) {
+            reject('Failed to remove image');
+            return console.log('Unable to remove object', err)
+        }
+        resolve(true);
+        console.log('Removed the object')
+      })
+   }); 
 }
 
 module.exports=FruitsController

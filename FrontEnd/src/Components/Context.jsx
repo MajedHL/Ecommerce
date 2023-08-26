@@ -107,7 +107,7 @@ const PutCart=()=>{
   }  
   if(cart._id) console.log("put");axios.put(`http://localhost:5000/carts/${cart._id}`, JSON.stringify(cart) , options)
 }
-
+//whenever Cart is modified on the front, we send the new Cart to the db
 useEffect(()=>{ 
   if(cart && cart.items && cartModified ){    
     PutCart()
@@ -121,7 +121,7 @@ useEffect(()=>{
   setProducts(fruits.concat(vegies))
   },[fruits,vegies])
 
-  //whenever Cart is modified on the front, we send the new Cart to the db
+  
  
 
 
@@ -140,17 +140,16 @@ useEffect(()=>{
     const addItems = (product, nb) => {
       const {_id, title,price_U, image } = product;
       console.log("add items")
-      if(!nb) return
-      if(!cart) return;
-      let cartcopy = {...cart};
-      let item=cartcopy.items.find((productId)=>productId._id===product._id)
+      if(!nb || !cart) return;      
+      let cartcopy = {...cart};     
+      let item=cartcopy.items.find((item)=>item.productId._id===product._id)      
       if(item) item.quantity+=parseFloat(nb); 
       else {
-        cartcopy.items.push({productId:{_id, title,price_U},quantity:nb,image:image})
+        cartcopy.items.push({productId:{_id, title,price_U},quantity:parseFloat(nb),image:image})
       }  
       setCart(cartcopy)    
       setCartModified(true);
-      console.log("cartcopy:",cartcopy)
+      
       return;
     };
 

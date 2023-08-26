@@ -8,6 +8,8 @@ const {router}=require('./Routes/UsersRoute');
 const { router : fruitsRouter}=require('./Routes/FruitsRoute');
 const {router : cartsRouter}=require('./Routes/CartsRoute');
 const {router : authRouter}=require('./Routes/AuthRoute');
+
+
  mongoose.connect('mongodb://localhost:27017/')
 .catch(error => console.log('Connection Error:'+error));
 
@@ -47,6 +49,7 @@ app.use(cors({
     credentials: true, // Include credentials (cookies) with the request
   }));
 app.use(express.json());
+
 app.use('/users', router)
 app.use('/fruits', fruitsRouter)
 app.use('/carts', cartsRouter)

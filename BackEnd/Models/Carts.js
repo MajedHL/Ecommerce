@@ -22,7 +22,6 @@ const CartSchema=new mongoose.Schema({
     strict:'throw',
 
 })
-CartSchema.index({userId:1,"items.productId":1})// productId must be unique within the items list
 const Carts=mongoose.model('Carts',CartSchema);
 Carts.createIndexes();
 module.exports=Carts

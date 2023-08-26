@@ -7,7 +7,7 @@ class AuthController{
     static activeSessions=[]; 
 
     static async login(req,res){
-        
+        console.log('in login')
         try{
             const {userName, password}=req.body;
             const user= await Users.findOne({userName:userName, password:password})           
@@ -72,7 +72,7 @@ class AuthController{
             }
             const token=crypto.randomBytes(32).toString('hex'); 
             
-            const createdUser= await Users.create({...req.body,role:"client",access_key:token})            
+            const createdUser= await Users.create({...req.body,role:"admin",access_key:token})            
             const createdCart= await Carts.create({userId:createdUser._id, items:[]})         
             
     

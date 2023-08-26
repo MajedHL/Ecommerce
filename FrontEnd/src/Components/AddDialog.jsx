@@ -5,6 +5,7 @@ import {Context} from './Context';
 import CustomeFileInput from './CustomeFileInput';
 import Notification from './Notification'
 import './Styles/Global.css'
+import axios from 'axios'
 // import {Button} from 'react-bootstrap'
 
 const ACTIONS={
@@ -57,6 +58,7 @@ export default function(props){
     const [state,dispatch]=useReducer(reducer,{fruitTitle:"",fruitPrice:0,fruitStock:0,vegTitle:"",vegPrice:0,vegStock:0})
     const [file,setFile]=useState();
     const [url,setUrl]=useState();
+    const [isAdmin, setIsAdmin] = useState(false)
     const notifRef=useRef()
     
 
@@ -93,21 +95,30 @@ export default function(props){
       },
         body:JSON.stringify(fruit),
       };
-     //if(fruitTitle) await fetch('http://localhost:5000/fruits',options);
+     
 
 
       const formData=new FormData();
       formData.append('file',file);
       formData.append('fruit',JSON.stringify(fruit))
-      await fetch('http://localhost:5000/fruits',{
-        method:"POST",
-        body:formData
-      });
-
-
-      dispatch({type:"def"})
-      setOpen(false)
-     }
+     try{
+        // await fetch('http://localhost:5000/fruits',{
+        //   method:"POST",
+        //   body:formData
+        // });
+       const headers= {
+         'Content-Type': 'multipart/form-data',
+         withCredentials:true
+      }
+        await axios.post('http://localhost:5000/fruits',formData, headers)
+        dispatch({type:"def"})
+        setOpen(false)
+        notifRef.current.click()
+      }catch(e){
+       console.log("Error:",e.message)
+       notifRef.current.click()
+     }      
+  }
 
 
    
@@ -128,10 +139,22 @@ export default function(props){
       event.preventDefault();       
     }
 
+    const Notif=()=>{
+     let notifProps={};
+      if(isAdmin) {
+        notifProps={type:'success',message:'Product was sent successfully !'}
+     }else{
+        notifProps={type:'error',message:'error !'}
+     }
+     
+      return <Notification ref={notifRef} {...notifProps} /> ; 
+    }
+
  
 
 return (<> 
-  
+  {/* {isAdmin && Notif()} */}
+ { Notif()}
   <Fab
           color="primary"
           aria-label="add"
@@ -140,8 +163,8 @@ return (<>
         >
           <AddIcon />
         </Fab>    
-        <Dialog open={open} onClose={handleClose}>
-        <Notification ref={notifRef} {...{type:'info',message:'Good !'}} />
+        <Dialog open={open} onClose={handleClose}>    
+        
     <DialogTitle>Add new</DialogTitle>    
     <DialogContent>
     <form onSubmit={handleSubmit}>

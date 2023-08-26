@@ -5,6 +5,7 @@ import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Dialog, DialogContent, Button  } from '@material-ui/core';
 import EditDialog from "../Components/EditDialog";
+import axios from 'axios'
 
 export default function(){
 const[product, setProduct]=useState();
@@ -23,11 +24,11 @@ let {fruits, RefreshFruits}=useContext(Context);
   const deletProduct= async ()=>{
    setOpen(false);  
    const options={
-        method:'DELETE',
+        withCredentials:true,
         headers:{"Content-Type":"application/json",},
      }
 
-    let resp= await fetch(`http://localhost:5000/fruits/${product._id}`,options)    
+    let resp= await axios.delete(`http://localhost:5000/fruits/${product._id}`,options)    
      RefreshFruits();
   }
     
