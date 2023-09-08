@@ -1,6 +1,6 @@
 const express=require('express');
 const path = require('path');
-const FruitsController=require('../Controllers/FruitsController')
+const CategoriesController=require('../Controllers/CategoriesController')
 const router=express.Router();
 const fs=require('fs')
 const multer = require('multer');
@@ -21,11 +21,11 @@ const storage = multer.diskStorage({
 const upload = multer({ storage }).single('file');
 
 
-router.get('/', combinedMiddlewares,FruitsController.getAll) //none
-router.get('/:id', combinedMiddlewares, FruitsController.getById) // none
-router.post('/', combinedMiddlewares, upload, FruitsController.add) //admins
-router.delete('/', combinedMiddlewares, FruitsController.deleteAll) //admins
-router.delete('/:id', combinedMiddlewares, FruitsController.deleteById) //admins
+router.get('/all', combinedMiddlewares,CategoriesController.getAll) // none 
+// router.get('/:id', combinedMiddlewares, TypesController.getById) // none 
+ router.post('/', combinedMiddlewares, upload, CategoriesController.add) // admins
+// router.delete('/', combinedMiddlewares, TypesController.deleteAll) // admins
+// router.delete('/:id', combinedMiddlewares, TypesController.deleteById) // admins
 
 
 

@@ -4,10 +4,11 @@ const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const MongoStore = require('connect-mongo');
 
-const {router}=require('./Routes/UsersRoute');
-const { router : fruitsRouter}=require('./Routes/FruitsRoute');
-const {router : cartsRouter}=require('./Routes/CartsRoute');
-const {router : authRouter}=require('./Routes/AuthRoute');
+const {router} = require('./Routes/UsersRoute');
+const { router : productsRouter} = require('./Routes/ProductsRoute');
+const {router : cartsRouter} = require('./Routes/CartsRoute');
+const {router : authRouter} = require('./Routes/AuthRoute');
+const {router : CategoriesRoute} = require('./Routes/CategoriesRoute');
 
 
  mongoose.connect('mongodb://localhost:27017/')
@@ -51,13 +52,31 @@ app.use(cors({
 app.use(express.json());
 
 app.use('/users', router)
-app.use('/fruits', fruitsRouter)
+app.use('/products', productsRouter)
 app.use('/carts', cartsRouter)
 app.use('/auth', authRouter)
+app.use('/categories', CategoriesRoute)
 
 
 app.listen(5000,()=>{
     console.log("server listening on port 5000")
 })
+
+process.on('SIGINT', async () => {
+  console.log('\nCtrl+C received. Cleaning up sessions before exiting...');
+
+  try {
+       const sessions=mongoose.connection.collection('sessions');
+       await sessions.deleteMany({})     
+       // Exit the process gracefully
+       process.exit(0);
+  } catch (error) {
+    console.error('Error during cleanup:', error);
+    // If there's an error during cleanup, exit the process with an error code
+    process.exit(1);
+  }
+});
+
+
 module.exports={app};
 

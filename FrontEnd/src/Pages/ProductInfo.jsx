@@ -13,12 +13,12 @@ const [open, setOpen] = useState(false);
 
 
 let {id}=useParams();
-let {fruits, RefreshFruits}=useContext(Context); 
+let {products, RefreshProducts}=useContext(Context); 
 
  useEffect(() => {    
-    const prod = fruits.find((fruit) => fruit._id === id);
+    const prod = products.find((product) => product._id === id);
     setProduct(prod);   
-  }, [fruits, id]);
+  }, [products, id]);
 
 
   const deletProduct= async ()=>{
@@ -28,8 +28,8 @@ let {fruits, RefreshFruits}=useContext(Context);
         headers:{"Content-Type":"application/json",},
      }
 
-    let resp= await axios.delete(`http://localhost:5000/fruits/${product._id}`,options)    
-     RefreshFruits();
+    let resp= await axios.delete(`http://localhost:5000/products/${product._id}`,options)    
+     RefreshProducts();
   }
     
   

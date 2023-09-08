@@ -4,13 +4,10 @@ class UsersController{
     
     
     
-    static async getUser(req,res){
-        console.log("getUser request")
-        const id=req.session.userId;
-       console.log("id:", id)
+    static async getUser(req,res){        
+        const id=req.session.userId;      
         try{
-        const user=await Users.findOne({_id:id})    
-        console.log("found user:",user)
+        const user=await Users.findOne({_id:id})  
         res.json(user);
        }catch(e){
         console.log(e.message);
@@ -18,11 +15,9 @@ class UsersController{
     }
 
 
-     static async getAll(req,res){
-         console.log("get request")
+     static async getAll(req,res){        
         try{
-         const users=await Users.find()    
-        console.log(users)
+         const users=await Users.find()   
         res.json(users);
         }catch(e){
             console.log(e.message);
@@ -30,8 +25,7 @@ class UsersController{
      }
 
 
-     static async deleteAll(req,res){
-        console.log("delete request")
+     static async deleteAll(req,res){       
        try{
         const users=await Users.deleteMany()  
         res.status(200).send("Deleted Succesfully");
@@ -41,8 +35,7 @@ class UsersController{
     }
 
     
-    static async deleteById(req,res){
-        console.log("delete request")
+    static async deleteById(req,res){       
         const id=req.params.id;
        try{
         const resp=await Users.deleteOne({_id:id})  

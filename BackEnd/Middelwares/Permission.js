@@ -14,8 +14,8 @@ function attributeRules(req,res,next){
 
    switch(route){
 
-    
-       case 'fruits': 
+
+       case 'products': 
             switch(endpoint){
                 case 'getAll':
                 case 'getById':
@@ -50,7 +50,18 @@ function attributeRules(req,res,next){
                     req.perm='admin';
                 break;
             }
-        break;               
+        break; 
+        
+        case 'categories':
+            switch(endpoint){
+                case 'getAll':
+                    req.perm='none';
+                break;                
+                default:
+                    req.perm='admin';
+                break;
+            }
+        break;
 
         // case 'auth':
         //    req.perm='none'; not needed because the midelware is not even applied on this route

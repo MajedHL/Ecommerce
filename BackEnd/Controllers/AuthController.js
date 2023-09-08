@@ -7,15 +7,14 @@ class AuthController{
     static activeSessions=[]; 
 
     static async login(req,res){
-        console.log('in login')
+        
         try{
             const {userName, password}=req.body;
             const user= await Users.findOne({userName:userName, password:password})           
      
      
              if(user) {
-               req.session.userId=user._id;
-               console.log("userId:",req.session.userId)
+               req.session.userId=user._id;               
                const obj=req.session;
                const { _id, userName, email, role, access_key}=user
                return res.status(200).send({ _id, userName, email, role, access_key})}

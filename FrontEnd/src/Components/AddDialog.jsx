@@ -6,59 +6,49 @@ import CustomeFileInput from './CustomeFileInput';
 import Notification from './Notification'
 import './Styles/Global.css'
 import axios from 'axios'
-// import {Button} from 'react-bootstrap'
+import { useEffect } from 'react';
 
 const ACTIONS={
-  SETFRUITTITLE:"setFruitTitle",
-  SETFRUITPRICE:"setFruitPrice",
-  SETFRUITSTOCK:"setFruitStock",
-  SETVEGTITLE:"setVegTitle",
-  SETVEGPRICE:"setVegPrice",
-  SETVEGSTOCK:"setVegStock"
-  
-}
+  SETPRODUCTTITLE:"setProductTitle",
+  SETPRODUCTPRICE:"setProductPrice",
+  SETPRODUCTSTOCK:"setProductStock",
+  SETPRODUCTCATEGORIE:"setProductCategorie",
+  }
 const reducer=(state,action)=>{
   switch(action.type){
 
-    case ACTIONS.SETFRUITTITLE:     
-    return {...state,fruitTitle:action.payload};
+    case ACTIONS.SETPRODUCTTITLE:   
+      return {...state,productTitle:action.payload};
     break;
 
-    case ACTIONS.SETFRUITPRICE:
-      return {...state,fruitPrice:action.payload};
+    case ACTIONS.SETPRODUCTPRICE:
+      return {...state,productPrice:action.payload};
     break;
 
-    case ACTIONS.SETFRUITSTOCK:
-      return {...state,fruitStock:action.payload};
+    case ACTIONS.SETPRODUCTSTOCK:
+      return {...state,productStock:action.payload};
     break;
 
-    case ACTIONS.SETVEGTITLE:
-      return {...state,vegTitle:action.payload};
+    case ACTIONS.SETPRODUCTCATEGORIE:    
+      return {...state,productCategorie:action.payload};
     break;
 
-    case ACTIONS.SETVEGPRICE:
-      return {...state,vegPrice:action.payload};
-    break;
-
-    case ACTIONS.SETVEGSTOCK:
-      return {...state,vegStock:action.payload};
-    break;
+    
 
     default:      
-      return {fruitTitle:"",fruitPrice:0,fruitStock:0,vegTitle:"",vegPrice:0,vegStock:0};
+      return {productTitle:"",productPrice:0,productStock:0,productCategorie:{}};
     break;
   }
 }
-export default function(props){  
+export default function(){  
 
-    const {fruits}=useContext(Context)
+    const {products, categories}=useContext(Context)    
     const [open, setOpen] = useState(false);
-    const [showFruitForm,setshowFruitForm]=useState(false);
-    const [showVegForm,setshowVegForm]=useState(false);
-    const [state,dispatch]=useReducer(reducer,{fruitTitle:"",fruitPrice:0,fruitStock:0,vegTitle:"",vegPrice:0,vegStock:0})
-    const [file,setFile]=useState();
+    const [showProductForm,setshowProductForm]=useState(false);    
+    const [state,dispatch]=useReducer(reducer,{productTitle:"",productPrice:0,productStock:0,productCategorie:""})
+    const [file, setFile]=useState();
     const [url,setUrl]=useState();
-    const [isAdmin, setIsAdmin] = useState(false)
+    const [isAdmin, setIsAdmin] = useState(false)    
     const notifRef=useRef()
     
 
@@ -80,29 +70,25 @@ export default function(props){
       if(false) {
         notifRef.current.click()
         return;     
-      }
+      }    
+           
+      const {productTitle,productPrice,productStock,productCategorie}=state;      
+      const product={productTitle,productPrice,productStock,productCategorie};    
       
-      console.log(state)
-      
-      const {fruitTitle,fruitPrice,fruitStock,vegTitle,vegPrice,vegStock}=state;
-      const fruit={fruitTitle,fruitPrice,fruitStock};
-      const  veg={vegTitle,vegPrice,vegStock}
-      console.log("fruit:"+JSON.stringify(fruit))
       const options={
         method:"POST",
         headers:{
           "Content-Type":"application/json",
       },
-        body:JSON.stringify(fruit),
-      };
-     
+        body:JSON.stringify(product),
+      };    
 
 
       const formData=new FormData();
       formData.append('file',file);
-      formData.append('fruit',JSON.stringify(fruit))
+      formData.append('product',JSON.stringify(product))
      try{
-        // await fetch('http://localhost:5000/fruits',{
+        // await fetch('http://localhost:5000/products',{
         //   method:"POST",
         //   body:formData
         // });
@@ -110,7 +96,7 @@ export default function(props){
          'Content-Type': 'multipart/form-data',
          withCredentials:true
       }
-        await axios.post('http://localhost:5000/fruits',formData, headers)
+        await axios.post('http://localhost:5000/products',formData, headers)
         dispatch({type:"def"})
         setOpen(false)
         notifRef.current.click()
@@ -119,25 +105,10 @@ export default function(props){
        notifRef.current.click()
      }      
   }
+      
 
 
-   
-    
-
-
-     const handleFruitClick=(event)=>{
-       setshowFruitForm(!showFruitForm)
-       event.preventDefault();       
-     }
-    
-    
-  
-
-
-     const handleVegClick=(event)=>{
-      setshowVegForm(!showVegForm)
-      event.preventDefault();       
-    }
+     
 
     const Notif=()=>{
      let notifProps={};
@@ -149,7 +120,8 @@ export default function(props){
      
       return <Notification ref={notifRef} {...notifProps} /> ; 
     }
-
+    
+ 
  
 
 return (<> 
@@ -165,41 +137,34 @@ return (<>
         </Fab>    
         <Dialog open={open} onClose={handleClose}>    
         
-    <DialogTitle>Add new</DialogTitle>    
+    <DialogTitle>Add new Product</DialogTitle>    
     <DialogContent>
     <form onSubmit={handleSubmit}>
-  <button onClick={handleFruitClick}>Add Fruit</button>
-  {showFruitForm && (
+  
+  {products && (
     <div>
-      <h4>Add a fruit</h4>
-      <label htmlFor="fruitTitle">Title*:</label><br/>
-      <input id="fruitTitle" type="text" placeholder="banana, apple, ..." required onChange={(e)=>dispatch({type:ACTIONS.SETFRUITTITLE,payload:e.target.value})}/><br/>
-      <label htmlFor="fruitPrice">Price per unit*:</label><br/>
-      <input id="fruitPrice" type="number" step="any" placeholder="20$..." min={0} required onChange={(e)=>dispatch({type:ACTIONS.SETFRUITPRICE,payload:e.target.value})}/><br/>
-      <label htmlFor="fruitStock">Stock*:</label><br/>
-      <input id="fruitStock" type="number" placeholder="200..." min={0} required onChange={(e)=>dispatch({type:ACTIONS.SETFRUITSTOCK,payload:e.target.value})}/><br/>
-    <CustomeFileInput text="Choose fruit image" onChange={handleImgChange}/>
+      <h4>Add a product</h4>
+      <label htmlFor="productTitle">Title*:</label><br/>
+      <input id="productTitle" type="text" placeholder="banana, apple, ..." required onChange={(e)=>dispatch({type:ACTIONS.SETPRODUCTTITLE,payload:e.target.value})}/><br/>
+      <label htmlFor="productPrice">Price per unit*:</label><br/>
+      <input id="productPrice" type="number" step="any" placeholder="20$..." min={0} required onChange={(e)=>dispatch({type:ACTIONS.SETPRODUCTPRICE,payload:e.target.value})}/><br/>
+      <label htmlFor="productStock">Stock*:</label><br/>
+      <input id="productStock" type="number" placeholder="200..." min={0} required onChange={(e)=>dispatch({type:ACTIONS.SETPRODUCTSTOCK,payload:e.target.value})}/><br/>
+      
+      <label htmlFor='types'>Categorie*:</label>
+      <br/>
+    {categories &&<select id="types" required onChange={(e)=>dispatch({type:ACTIONS.SETPRODUCTCATEGORIE,payload:e.target.value})}>
+    <option value="" hidden>None</option>
+      {categories.flatMap((categorie)=>{
+        return ([<option key={categorie._id} value={categorie.title}>{categorie.title}</option>,<option disabled>----------</option>])
+      })}
+        
+    </select>  } 
+    
+
+    <CustomeFileInput text="Choose product image" onChange={handleImgChange}/>
     </div>
   )}
-
-  <br/><br/>
-
-  <button onClick={handleVegClick}>Add Veg</button>
-  {showVegForm && (
-    <div>
-      <h4>Add a Veg</h4>
-      <label htmlFor="vegTitle">Title:</label><br/>
-      <input id="vegTitle" type="text" placeholder="cucumber, lettuce, ..." required onChange={(e)=>dispatch({type:ACTIONS.SETVEGTITLE,payload:e.target.value})}/><br/>
-      <label htmlFor="vegPrice">Price per unit:</label><br/>
-      <input id="vegPrice" type="number" placeholder="20$..." min={0} required onChange={(e)=>dispatch({type:ACTIONS.SETVEGPRICE,payload:e.target.value})}/><br/>
-      <label htmlFor="vegStock">Stock:</label><br/>
-      <input id="vegStock" type="number" placeholder="200..." min={0} required onChange={(e)=>dispatch({type:ACTIONS.SETVEGSTOCK,payload:e.target.value})}/><br/>
-    </div>
-  )}
-
-
-<br/>
-
   <br/><br/>
   <input style={{ color: 'green', marginRight: '10px' }} type="submit" value="Submit"/>
   <input value="Close" style={{ color: 'red' }} onClick={handleClose} type='button' />

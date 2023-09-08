@@ -1,4 +1,4 @@
-const Fruits=require('../Models/Fruits');
+const Products=require('../Models/Products');
 // const Minio = require('minio');
 const {minioClient}=require('../config')
 const fs=require('fs');
@@ -7,17 +7,16 @@ const mongoose=require('mongoose');
 const { resolve } = require('path');
 const fsExtra=require('fs-extra')
 
-class FruitsController{
+class ProductsController{
 
 
     static async getAll(req,res){
         try{ 
-            if(req.session.userId) console.log("still logged")
-            
-        let fruits= await Fruits.find().lean();
+                        
+        let products= await Products.find().lean();
         let promises=[] 
-        fruits.forEach( (fruit)=>{             
-             promises.push(FruitsController.GetImage(req,res,fruit.ref)); 
+        products.forEach( (product)=>{             
+             promises.push(ProductsController.GetImage(req,res,product.ref)); 
                  
         })
         
@@ -26,11 +25,11 @@ class FruitsController{
             return promises;
         }).then((images)=>{            
             for(let i=0;i<images.length;i++){
-                fruits[i]['image']=images[i];
+                products[i]['image']=images[i];
             }
-            return fruits;
-        }).then((fruits)=>{            
-            return  res.status(200).json(fruits)
+            return products;
+        }).then((products)=>{            
+            return  res.status(200).json(products)
         }) 
 
         }catch(e){
@@ -43,30 +42,27 @@ class FruitsController{
 
    
 
-    static async add(req,res){
-        console.log("post request add");
+    static async add(req,res){        
         let result=true;
         try{
-            const {fruit:sentfruit}= req.body
-            const {fruitTitle:title,fruitPrice:price_U,fruitStock:stocks}=JSON.parse(sentfruit)       
-              
+            const {product:sentproduct}= req.body
+            const {productTitle:title,productPrice:price_U,productStock:stocks,productCategorie:categorie}=JSON.parse(sentproduct)      
+                      
             let ref='';
             if(req.file) ref=req.file.filename
-            else ref='fruits.jpg';
-            console.log("ref:"+ref)
-            const fruit={title,price_U,stocks,ref};
-            await Fruits.create(fruit)
-            result= await FruitsController.UploadFIle(req,res)         
-            console.log("result:"+result)
-            if(result!==false) return res.status(201).json(fruit)
+            //FIX ME
+            else ref='products.png'            
+            const product={title,price_U,stocks,categorie,ref};
+            await Products.create(product)
+            result = await ProductsController.UploadFIle(req,res)        
+            if(result!==false) return res.status(201).json(product)
         
         }catch(e){
             console.log("The Error:",e);            
-          if(e.code)  {if(e.code===11000) {res.status(403).send(e.message+", the title must be unique"); return;} }
-         if(e.message) res.status(500).send(e.message)     
-         const dirPath=path.resolve(__dirname,'..','temp/');
-         CleansTemp(dirPath);
-       
+            if(e.code)  {if(e.code===11000) {res.status(403).send(e.message+", the title must be unique"); return;} }
+            if(e.message) res.status(500).send(e.message)     
+            const dirPath=path.resolve(__dirname,'..','temp/');
+            CleansTemp(dirPath);      
        
         } 
           
@@ -74,10 +70,9 @@ class FruitsController{
 
 
 
-     static async deleteAll(req,res){
-        console.log("delete request")
+     static async deleteAll(req,res){       
        try{
-        const fruits=await Fruits.deleteMany()  
+        const response=await Products.deleteMany()  
         res.status(200).send("Deleted Succesfully");
        }catch(e){
            console.log(e.message);
@@ -88,10 +83,10 @@ class FruitsController{
 
     static  UploadFIle(req,res){
     if(!req.file){
-        res.status(200).send("No image was chosen so the fruit will have the default fruit image")
+        res.status(200).send("No image was chosen so the product will have the default product image")
         return false
     }        
-    const bucketName = 'fruits';
+    const bucketName = 'products';
     const file=req.file;
     let objectName=file.filename;
     const filepath=path.resolve(__dirname,'..','temp/'+objectName);    
@@ -101,9 +96,7 @@ class FruitsController{
         if (error) {
           console.error('Error uploading file to MinIO:', error);
           res.status(500).json({ error: 'Error uploading the image, please try modifying the image later on' });              
-          const err={code:error.code,message:"Error uploading the image"}         
-        
-
+          const err={code:error.code,message:"Error uploading the image"}        
           reject(err);
           return;
         }
@@ -129,7 +122,7 @@ class FruitsController{
 
 
 static  GetImage(req, res, objectName) {   
-     const bucketName = 'fruits';            
+     const bucketName = 'products';            
      return new Promise((resolve,reject)=>{        
             minioClient.presignedGetObject(bucketName, objectName, (err, presignedUrl) => {
                 if (err) {
@@ -150,20 +143,19 @@ static  GetImage(req, res, objectName) {
 
 
 
-static async  deleteById(req,res){
-   console.log("delete by id")
+static async  deleteById(req,res){  
     try{
         const id=req.params.id;   
         if(id){                             
                                         
-            const fruit=await Fruits.findOneAndDelete({_id:id})
-            
-            if(fruit.ref!=="fruits.jpg") 
-            {const removeResp= await RemoveImage('fruits',fruit.ref) 
-            console.log("removeResp:",removeResp)}            
-            return res.status(200).json(fruit);
+            const product=await Products.findOneAndDelete({_id:id})
+            //FIXE ME: add other default types images
+            if(product.ref!=="products.png"){
+                const removeResp= await RemoveImage('products',product.ref) 
+                console.log("removeResp:",removeResp)}            
+                return res.status(200).json(product);
         }
-        else return res.status(400).send("the requested fruit doesnt exist")
+        else return res.status(400).send("the requested product doesnt exist")
     }catch(e){
         if(e.message){
             console.log("Error:",e.message);
@@ -175,16 +167,14 @@ static async  deleteById(req,res){
 }
 
 
-static async  getById(req,res){
-    console.log("get by id")
+static async  getById(req,res){   
      try{
          const id=req.params.id;   
          if(id){
-             const fruit=await Fruits.findOne({_id:id})
-             console.log(fruit)
-             return res.status(200).json(fruit);
+             const product=await Products.findOne({_id:id})             
+             return res.status(200).json(product);
          }
-         else return res.status(400).send("the requested fruit doesnt exist")
+         else return res.status(400).send("the requested product doesnt exist")
      }catch(e){
          if(e.message){
              console.log("Error:",e.message);
@@ -223,4 +213,4 @@ function RemoveImage(bucketName,imageName) {
    }); 
 }
 
-module.exports=FruitsController
+module.exports=ProductsController

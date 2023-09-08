@@ -7,8 +7,7 @@ class CartsController{
     // for admins
     static async getAll(req,res){
         try{
-            const carts=await Carts.find();
-            carts.forEach((cart)=>console.log(cart))
+            const carts=await Carts.find();           
             return res.status(200).json(carts)
 
         }catch(e){
@@ -53,8 +52,7 @@ class CartsController{
         try{
             const id=req.session.userId 
             if(id){
-                const cart=await Carts.findOne({userId:id }).populate('items.productId').exec();           
-                console.log('in get Cart, cart:',cart)
+                const cart=await Carts.findOne({userId:id }).populate('items.productId').exec();       
                 return res.status(200).json(cart)                   
         }
 
@@ -85,33 +83,7 @@ class CartsController{
     }
 
 
-/** title:String,
-        price:Number,
-        quantity:Number,
-        image:String */
 
-    // static async addItems(req,res){
-    //     try{
-    //         const sentItem=req.body 
-    //         const id=req.params.id 
-    //         const cart=await Carts.findOne({_id:id});
-            
-    //         const existingItem=cart.items.find(it=>it.title===sentItem.title) 
-    //         console.log("existingItem:",existingItem)
-    //         if(!existingItem) cart.items.push(sentItem) // if the item doesnt exist in the cart
-    //         else {
-    //             existingItem.quantity=sentItem.quantity;                               
-    //        } 
-    //        console.log("the cart:",cart)
-    //        await cart.save()           
-    //        console.log("cart items:",cart.items)           
-    //        res.status(200).send("Cart Updated succesfully");          
-
-    //     }catch(e){
-    //         console.log(e.message)
-    //         res.status(400).send(e.message)
-    //     }
-    // }
 
 
 
@@ -123,8 +95,7 @@ class CartsController{
            
             const Cart=await Carts.findOne({_id:id});
             //extract the list of ids and quantities, items is a list of ids and quantities not the populated objects             
-            const newItems=newCart.items.map((item)=>{return {productId:item.productId._id, quantity:item.quantity}})
-            console.log("newItems:",newItems)
+            const newItems=newCart.items.map((item)=>{return {productId:item.productId._id, quantity:item.quantity}})           
             Cart.items=newItems;
             await Cart.save();
             res.status(200).send('Updated succesfully');
@@ -139,8 +110,7 @@ class CartsController{
 
 
 
-    static async deleteAll(req,res){
-        console.log("delete request")
+    static async deleteAll(req,res){        
        try{
         const carts=await Carts.deleteMany()  
         res.status(200).send("Deleted Succesfully");

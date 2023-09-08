@@ -13,8 +13,7 @@ export default function (props) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    addItems(product, input);
-    console.log('id:'+product._id)
+    addItems(product, input);   
   };
 
   return (

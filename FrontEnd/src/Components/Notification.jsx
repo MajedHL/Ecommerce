@@ -14,8 +14,7 @@ const App=forwardRef((props,ref)=> {
         closeOnClick: true, 
         pauseOnHover: false,            
     };
-     const showToastMessage = () => {
-        console.log('in showToastMessage;  type is:',notifType)
+     const showToastMessage = () => {       
         
         switch(notifType){
     

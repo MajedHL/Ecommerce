@@ -1,6 +1,6 @@
 const mongoose=require('mongoose');
 
-const FruitsSchema=new mongoose.Schema({
+const ProductsSchema=new mongoose.Schema({
 
 title:{
     type:String,
@@ -15,6 +15,10 @@ stocks:{
     type:Number,
     required:true,
  },
+ categorie:{
+     type: String,
+     required: false,     
+     },
 ref:String
 
 },{
@@ -22,4 +26,4 @@ ref:String
     required:true,
 })
 
-module.exports=mongoose.model('Fruits',FruitsSchema);
+module.exports=mongoose.model('Products',ProductsSchema);
