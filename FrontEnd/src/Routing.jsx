@@ -8,9 +8,7 @@ import ProductInfo from "./Pages/ProductInfo";
 import UserInfo from "./Pages/UserInfo";
 import NavBar from "./Components/NavBar";
 import Cart from "./Pages/Cart.jsx";
-import Fruits from "./Pages/Fruits.jsx";
 import Shop from "./Pages/Shop.jsx";
-import Vegies from "./Pages/Vegies.jsx";
 import ProductsPage from './Pages/ProductsPage'
 
 export default function(){
